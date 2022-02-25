@@ -1,3 +1,25 @@
+
+nowT=Date("2022-02-26").getTime();
+//console.log(t)
+
+var name = "tides.data.csv";
+f = require("Storage").read(name);
+f=f.split("\n");
+for (ix in f)
+{
+  e = f[ix].split(",");
+  t = e[0];
+  if(t > nowT){
+    tideinfo = e;
+    break;
+  }
+}
+console.log(nowT);
+console.log(tideinfo);
+//---------------------
+
+
+
 var tides = require("Storage").readJSON("tides.data.js",true) || {};
 console.log("test");
 //var l = f.readLine();
