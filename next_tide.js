@@ -15,4 +15,8 @@ for(var key in tides){
   }
   lastTide=test;
 }
-console.log("next tide : " + nextTide['time'] + " "+nextTide['level']/100);
+msg="next tide : " + nextTide['time'] + " "+nextTide['level']/100;
+console.log(msg);
+g.setFont('Vector', 18);
+g.drawString(msg, 10,10);
+g.flip()
