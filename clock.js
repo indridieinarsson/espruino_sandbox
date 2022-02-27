@@ -2,6 +2,17 @@
 // 1/4 : String.fromCharCode(188)
 // 2/4 : String.fromCharCode(189)
 // 3/4 : String.fromCharCode(190)
+baro = {};
+baro.draw = function draw(x,y,Radius, Settings) {
+  let halfScreenWidth   = g.getWidth() / 2;
+  let largeComplication = (x === halfScreenWidth);
+  g.setColor(Settings.Foreground === 'Theme' ? g.theme.fg : Settings.Foreground || '#000000');
+  g.setFont('Vector', 18);
+  g.setFontAlign(0,0);
+  dp = Math.round(WIDGETS.widbarom.getChange() * 10) / 10;
+  Text = ''+dp+"Hp";
+};
+
 exports = {};
   exports.quarters = [0, String.fromCharCode(188), String.fromCharCode(189), String.fromCharCode(190), 0];
 
@@ -12,8 +23,7 @@ exports = {};
   exports.draw = function draw (x,y, Radius, Settings) {
     let halfScreenWidth   = g.getWidth() / 2;
     let largeComplication = (x === halfScreenWidth);
-      let hands = require('https://raw.githubusercontent.com/rozek/banglejs-2-simple-clock-hands/main/ClockHands.js');
-
+    
     g.setColor(Settings.Foreground === 'Theme' ? g.theme.fg : Settings.Foreground || '#000000');
     g.setFont('Vector', 18);
     g.setFontAlign(0,0);
