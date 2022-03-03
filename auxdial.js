@@ -40,8 +40,8 @@
 
         for (let i = 0; i < 12; i++) {
             let Phi = i * Math.PI*2/12;
-            let dotx = CenterX + Radius * Math.sin(Phi);
-            let doty = CenterY - Radius * Math.cos(Phi);
+            let dotx = CenterX + outerRadius * Math.sin(Phi);
+            let doty = CenterY - outerRadius * Math.cos(Phi);
             g.drawCircle(dotx,doty, 0.5);
         }
 
