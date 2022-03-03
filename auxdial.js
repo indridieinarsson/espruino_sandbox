@@ -38,12 +38,23 @@
             CenterY + MinuteHandLength*cPhi
         );
 
-        for (let i = 0; i < 12; i++) {
+        function drawdot(i){
             let Phi = i * Math.PI*2/12;
             let dotx = CenterX + outerRadius * Math.sin(Phi);
             let doty = CenterY - outerRadius * Math.cos(Phi);
             g.drawCircle(dotx,doty, 0.5);
         }
+        g.setColor('#0000FF');
+        for (let i = -2; i < 3; i++) {
+            drawdot(i);
+        }
+        g.setColor('#FF0000');
+        for (let i = 4; i < 9; i++) {
+            drawdot(i);
+        }
+        g.setColor('#FF00FF');
+        drawdot(-3);
+        drawdot(3);
 
         if (Seconds != null) {
             g.setColor(Settings.Seconds === 'Theme' ? g.theme.fgH : Settings.Seconds || '#FF0000');
