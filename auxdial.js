@@ -42,17 +42,17 @@
             let Phi = i * Math.PI*2/12;
             let dotx = CenterX + outerRadius * Math.sin(Phi);
             let doty = CenterY - outerRadius * Math.cos(Phi);
-            g.drawCircle(dotx,doty, 0.5);
+            g.drawCircle(dotx,doty, 1);
         }
-        g.setColor('#0000FF');
+        g.setColor('#00FFFF');//Cyan
         for (let i = -2; i < 3; i++) {
             drawdot(i);
         }
-        g.setColor('#FF0000');
+        g.setColor('#FF0000');//red
         for (let i = 4; i < 9; i++) {
             drawdot(i);
         }
-        g.setColor('#FF00FF');
+        g.setColor('#FF00FF');//Magenta
         drawdot(-3);
         drawdot(3);
 
