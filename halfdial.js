@@ -3,7 +3,7 @@
 const NDots = 20;
 const dphi = 2*Math.PI/50
 
-function draw (Settings, CenterX, CenterY, outerRadius, value) {
+exports.draw = function draw (Settings, CenterX, CenterY, outerRadius, value) {
   function drawdot(Phi){
       let dotx = CenterX + outerRadius * Math.sin(Phi);
       let doty = CenterY - outerRadius * Math.cos(Phi);
@@ -19,11 +19,11 @@ function draw (Settings, CenterX, CenterY, outerRadius, value) {
       g.drawLine(dotx,doty,dotx2,doty2);
   }
 
-  g.setColor('#FFFFFF');//red
+  g.setColor('#FFFFFF');
   for (let i = 0; i <= 10; i++) {
     drawdot(Math.PI+i*dphi);
     drawdot(Math.PI-i*dphi);
   }
-  g.setColor('#FFFFFF');//black
+  g.setColor('#FFFFFF');
   drawArm(value);
   }})();
