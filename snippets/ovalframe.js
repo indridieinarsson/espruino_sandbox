@@ -62,6 +62,9 @@ segments.forEach(function(nr, ix){
 console.log(cssegments);
 console.log(segments);
 halflength = (whalf-rad) + bl + (h-rad-rad) + bl + (whalf-rad);
+n_hbl = Math.round((whalf-rad)/bl);
+n_bl = Math.round((w-2*rad)/bl);
+console.log("nr of corners in straight segments : " + n_hbl + " , " + n_bl);
 console.log("bogalengd :" + bl);
 console.log("total length :" + halflength);
 
