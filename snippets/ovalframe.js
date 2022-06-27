@@ -30,7 +30,6 @@ function thickring(x,y, r, th){
   g.fillCircle(x,y,r);
   g.setColor(255,255,255);
   g.fillCircle(x,y,r-th-1);
-  
 }
 h = g.getHeight();
 w = g.getWidth();
@@ -49,16 +48,26 @@ thickring(w-rad-2,h-rad-2, rad, th);
 bl = Math.round(0.5*Math.PI*rad);
 //segments = []
 //segments.push(whalf-rad);
+bsegments = [];
+
 segments = [(whalf-rad), bl, (h-rad-rad), bl, (whalf-rad)];
-cssegments = [];
-segments.forEach(function(nr, ix){
-  if (ix==0) {
-    cssegments.push(nr);
-  }
-  else {
-  cssegments.push(nr+cssegments[ix-1]);
-  }
-});
+
+function cumsum(segs) {
+  retval = [];
+  segs.forEach(function(nr, ix){
+    if (ix==0) {
+      retval.push(nr);
+    }
+    else {
+      retval.push(nr+retval[ix-1]);
+    }
+  });
+  return retval;
+}
+
+cssegments = cumsum(segments);
+
+console.log("cumulative segment lengths");
 console.log(cssegments);
 console.log(segments);
 halflength = (whalf-rad) + bl + (h-rad-rad) + bl + (whalf-rad);
@@ -69,16 +78,17 @@ console.log("bogalengd :" + bl);
 console.log("total length :" + halflength);
 
 nrtofind = 200;
+tarcnr = n_hbl;
+barcnr = tarcnr + n_bl+1;
+console.log("arc indices " + tarcnr + " , "+barcnr);
 function find_split_segment(csseg, nrtf){
-for (var i = 0; i < csseg.length; i++) {
-    //console.log(cssegments[i]);
-  if (nrtf < csseg[i]){
-    console.log("found it" + i);
-    return i;
+  for (var i = 0; i < csseg.length; i++) {
+    if (nrtf < csseg[i]){
+      return i;
+    }
   }
 }
-}
-a = find_split_segment(cssegments, nrtofind);
+// fill rest o center
 g.fillRect(0+rad,0,     w-rad-2,h);
 g.fillRect(0    ,0+rad, w      ,h-rad-2);
 // Top segment:g.fillRect(0+rad,0, w-rad-2, th);
@@ -86,13 +96,60 @@ g.setColor(128,128,0);
 g.fillRect(0+rad,0, whalf, th);
 g.setColor(255,0,0);
 g.fillRect(whalf,0, w-rad-2, th);
+top = [];
+//nrs = [0,1,2,3,4,5]
+nrs = [];
+for (var i=0; i<n_bl; i++){
+  nrs.push(i);
+}
 
+l = w-2*rad-2
+segments = nrs.map(x => Math.round((x+1)*l/6));
+
+intervals = nrs.map(x => [rad+Math.round(x*l/6), rad+Math.round((x+1)*l/6)]);
+lengths = nrs.map(x => Math.round((x+1)*l/n_bl) - Math.round(x*l/n_bl));
+// construct length of all segments:
+all_lengths = []
+all_lengths=all_lengths.concat(lengths.slice(n_hbl,n_bl));
+all_lengths.push(bl);
+all_lengths=all_lengths.concat(lengths);
+all_lengths.push(bl);
+all_lengths=all_lengths.concat(lengths.slice().reverse().slice(n_hbl,n_bl));
+cumsum_all = cumsum(all_lengths);
+a = find_split_segment(cumsum_all, nrtofind);
+rtop = a>tarcnr;
+rbot = a>barcnr;
+
+g.setColor(0,128,128);
+// Top
+r_intervals = intervals.slice(n_hbl, n_bl);
+l_intervals = intervals.slice(0, n_hbl);
+r_rects=[];
+r_intervals.forEach(it => {
+  tmp=[it[0], 0, it[1], th]
+  r_rects.push(tmp);
+});
+// Right
+intervals.forEach(it => {
+  r_rects.push([w-th-2, it[0], w, it[1]]);
+});
+// Bottom
+r_intervals.slice().reverse().forEach(it => {
+  r_rects.push([it[0], h-th-2, it[1], h]);
+});
+r_rects.forEach(it => g.fillRect(it[0],it[1],it[2],it[3]));
+// Left
+//intervals.forEach(it => g.fillRect(0, it[0], th, it[1]));//, h-rad-2));
+// Right
+//intervals.forEach(it => g.fillRect(w-th-2, it[0], w, it[1]));
+
+//function 
 // Bottom segment
-g.setColor(0,255,0);
-g.fillRect(0+rad,h-th-2, w-rad-2, h);
+//g.setColor(0,255,0);
+//g.fillRect(0+rad,h-th-2, w-rad-2, h);
 // Left segment
-g.setColor(0,0,255);
-g.fillRect(0,0+rad, th, h-rad-2);
+//.setColor(0,0,255);
+//g.fillRect(0,0+rad, th, h-rad-2);
 // Right segment
-g.setColor(255,0,255);
-g.fillRect(w-th-2,0+rad, w, h-rad-2);
+//g.setColor(255,0,255);
+//g.fillRect(w-th-2,0+rad, w, h-rad-2);
