@@ -43,7 +43,7 @@ function thickring(x,y, r, th){
 }
 h = g.getHeight();
 w = g.getWidth();
-rad = 16;
+rad = 8;
 th=3;
 theme_bright="#00FFFF";
 theme_dark = "#002222";
@@ -68,9 +68,10 @@ halflength = (w/2-rad) + bl + (h-rad-rad) + bl + (w/2-rad);
 n_hbl = Math.round((w/2-rad)/bl);
 n_bl = Math.round((w-2*rad)/bl);
 
-nrtofind = 40;
+nrtofind = 160;
 tarcnr = n_hbl;
 barcnr = tarcnr + n_bl+1;
+console.log("number of segments : "+n_bl + ", ", n_hbl);
 console.log("arc indices " + tarcnr + " , "+barcnr);
 
 nrs = [];
@@ -79,12 +80,13 @@ for (var i=0; i<n_bl; i++){
 }
 
 l = w-2*rad-2
-intervals = nrs.map(x => [rad+Math.round(x*l/6), rad+Math.round((x+1)*l/6)]);
+intervals = nrs.map(x => [rad+Math.round(x*l/n_bl), rad+Math.round((x+1)*l/n_bl)]);
 cumsum_all = get_cumlength(l, n_bl, nrs);
-    a = find_split_segment(cumsum_all, nrtofind);
+a = find_split_segment(cumsum_all, nrtofind);
 r_intervals = intervals.slice(n_hbl, n_bl);
 l_intervals = intervals.slice(0, n_hbl);
 r_rects=[];
+
 r_intervals.forEach(it => {
   tmp=[it[0], 0, it[1], th]
   r_rects.push(tmp);
@@ -98,13 +100,31 @@ r_intervals.slice().reverse().forEach(it => {
   r_rects.push([it[0], h-th-2, it[1], h]);
 });
 
-g.setColor(theme_dark)
+l_rects=[];
+l_intervals.forEach(it => {
+  l_rects.push([it[0], 0, it[1], th]);
+});
+// Left
+intervals.forEach(it => {
+  l_rects.push([0, it[0], th, it[1]]);
+});
+// Bottom
+l_intervals.slice().reverse().forEach(it => {
+  l_rects.push([it[0], h-th-2, it[1], h]);
+});
+
+
+g.setColor(theme_dark);
 rtop = a<tarcnr;
 if (rtop) {g.setColor(theme_dark);} else {g.setColor(theme_bright);}
 topright();
 rbot = a<barcnr;
 if (rbot) {g.setColor(theme_dark);} else {g.setColor(theme_bright);}
 bottomright();
+g.setColor(theme_dark);
+topleft();
+g.setColor(theme_dark);
+bottomleft();
 console.log("rtop, rbot" + rtop + rbot);
 // fill rest of center
 g.setColor(g.theme.bg);
@@ -120,4 +140,9 @@ r_rects.forEach((it,index) => {
   g.fillRect(it[0],it[1],it[2],it[3]);
 }
   );
-
+l_rects.forEach((it,index) => {
+  if (index >= a) {g.setColor(theme_dark);}
+  console.log("index" + index);
+  g.fillRect(it[0],it[1],it[2],it[3]);
+}
+  );
