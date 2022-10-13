@@ -126,7 +126,7 @@ function drawGauge(percL, percR){
     r_rects=[];
 
     r_intervals.forEach(it => {
-        tmp=[it[0], 0, it[1], th];
+        tmp=[it[0], 0, it[1], th+1];
         r_rects.push(tmp);
     });
     // Right
@@ -142,11 +142,11 @@ function drawGauge(percL, percR){
 
     l_rects=[];
     l_intervals.slice().reverse().forEach(it => {
-        l_rects.push([it[0], 0, it[1], th]);
+        l_rects.push([it[0], 0, it[1], th+1]);
     });
     // Left
     intervals.forEach(it => {
-        l_rects.push([0, it[0], th, it[1]]);
+        l_rects.push([0, it[0], th+1, it[1]]);
     });
     // Bottom
     l_intervals.forEach(it => {
@@ -327,11 +327,11 @@ loadSettings();
 console.log("colors :" +settings.fg + settings.gy);
 var cg_topleft=new CGauge("topleft",100, 100, 110, settings.fg, settings.gy,90,180,null, 0+rad,0+rad, rad,rad-th-1, settings.fg, settings.gy, [0,0,0]);
 
-var cg_topright=new CGauge("topright",100, 100, 110, settings.fg, settings.gy,270,180,null, w-rad-2,0+rad, rad,rad-th-1, settings.fg, settings.gy, [0,0,0]);
+var cg_topright=new CGauge("topright",100, 100, 110, settings.fg, settings.gy,270,180,null, w-rad-1,0+rad, rad,rad-th-1, settings.fg, settings.gy, [0,0,0]);
 
-var cg_bottomleft=new CGauge("bottomleft",100, 100, 110, settings.fg, settings.gy, 270, 359,null, 0+rad  ,h-rad-2, rad,rad-th-1, settings.fg, settings.gy, [0,0,0]);
+var cg_bottomleft=new CGauge("bottomleft",100, 100, 110, settings.fg, settings.gy, 270, 359,null, 0+rad  ,h-rad-1, rad,rad-th-1, settings.fg, settings.gy, [0,0,0]);
 
-var cg_bottomright=new CGauge("bottomright",100, 100, 110, settings.fg, settings.gy, 0, 90,null, w-rad-2,h-rad-2, rad,rad-th-1, settings.fg, settings.gy, [0,0,0]);
+var cg_bottomright=new CGauge("bottomright",100, 100, 110, settings.fg, settings.gy, 0, 90,null, w-rad-1,h-rad-1, rad,rad-th-1, settings.fg, settings.gy, [0,0,0]);
 cg_bottomleft.draw();
 cg_topright.draw();
 cg_topleft.draw();
@@ -339,4 +339,4 @@ cg_bottomright.draw();
 
 // setTimeout(run,99);
 //cg_topleft.draw(1);
-drawGauge(40,60);
+drawGauge(45,60);
