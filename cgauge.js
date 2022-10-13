@@ -68,35 +68,35 @@ function get_cumlength(l, n_bl, nrs){
     return cumsum(all_lengths);
 }
 
-function thickring(x,y, r, th, color){
-    g.setColor(color);
-    g.fillCircle(x,y,r);
-    g.setColor(g.theme.bg);
-    g.fillCircle(x,y,r-th-1);
-}
+//function thickring(x,y, r, th, color){
+//    g.setColor(color);
+//    g.fillCircle(x,y,r);
+//    g.setColor(g.theme.bg);
+//    g.fillCircle(x,y,r-th-1);
+//}
 
 function topleft(color){
   console.log("topleft");
-  cg_topleft.setVal(10);
+  cg_topleft.setVal(0);
   //thickring(0+rad  ,0+rad  , rad, th, color);
 }
 
 function topright(color){
   console.log("topright");
     //thickring(w-rad-2,0+rad  , rad, th, color);
-  cg_topright.setVal(10);
+  cg_topright.setVal(0);
 }
 
 
 function bottomleft(color){
   console.log("bottomleft");
-  cg_bottomleft.setVal(10);
+  cg_bottomleft.setVal(0);
     //thickring(0+rad  ,h-rad-2, rad, th, color);
 }
 
 function bottomright(color){
   console.log("bottomright");
-  cg_bottomright.setVal(10)
+  cg_bottomright.setVal(0)
     //thickring(w-rad-2,h-rad-2, rad, th, color);
 }
 
@@ -161,8 +161,8 @@ function drawGauge(percL, percR){
     if (gaugePosL<tarcnr) {bottomleft(settings.gy);} else {bottomleft(settings.fg);}
     // fill rest of center
     g.setColor(g.theme.bg);
-    g.fillRect(0+rad,0,     w-rad-2,h);
-    g.fillRect(0    ,0+rad, w      ,h-rad-2);
+    //g.fillRect(0+rad,0,     w-rad-2,h);
+    //g.fillRect(0    ,0+rad, w      ,h-rad-2);
     g.setColor(settings.fg);
     // Top
     r_rects.forEach((it,index) => {
@@ -245,12 +245,14 @@ function CGauge(id,val,minV,maxV,color,fColor,begDeg,degs,deg0
   _.setVal(val,-1); // set value only
 } p=CGauge.prototype;
 p.setVal=function(v,o1,o2) { // --- set min/max adj'd val, draw != && o1=0 || o1>0; 
+  console.log("extras:" +v+o1 + o2);
   var chd = (v=(v<this.minV)?this.minV:(v>this.maxV)?this.maxV:v)!=this.val; // ret
+  console.log("chd :"+ chd + "| "+v + "| "+ this.val);
   if (o1<0) { this.val=v; this.vLD=null; // update value only, NO drawing & never draw
   } else if (v!=this.val||o1>0||o2) { this.val=v; this.draw(o1,o2); }
   return chd; };
 p.draw=function(o1,o2) { // --- draw circular gauge (otp1:value, 2:ticks+extras)
-  var s=this.sCnt,v=Math.round(s/(this.maxV-this.minV)*this.val)
+  var s=this.sCnt,v=Math.round(s/(this.maxV-this.minV)*(this.val-this.minV))
     , h=(this.rIn)?1:0,fV=!!this.fV,fF=!!this.fF,bC=this.bClr
     , vL,vs,m; // console.log(this.id,this.val,v,s,o1,o2,this.cUp);
   if (o2) { this.drawXtras(s,v,h,o1); }
@@ -325,18 +327,51 @@ function hh() { console.log("someting happened");
 function c() { cont(); }
 loadSettings();
 console.log("colors :" +settings.fg + settings.gy);
-var cg_topleft=new CGauge("topleft",100, 100, 110, settings.fg, settings.gy,90,180,null, 0+rad,0+rad, rad,rad-th-1, settings.fg, settings.gy, [0,0,0]);
+var cg_topleft=new CGauge("topleft",0, 0, 100, settings.fg, settings.gy, 180, 90,null, 0+rad,0+rad, rad,rad-th-1, settings.fg, settings.gy, [0,0,0]);
 
-var cg_topright=new CGauge("topright",100, 100, 110, settings.fg, settings.gy,270,180,null, w-rad-1,0+rad, rad,rad-th-1, settings.fg, settings.gy, [0,0,0]);
+var cg_topright=new CGauge("topright",0, 0, 200, settings.fg, settings.gy, 270, 90,null, w-rad-1,0+rad, rad,rad-th-1, settings.fg, settings.gy, [0,0,0]);
 
-var cg_bottomleft=new CGauge("bottomleft",100, 100, 110, settings.fg, settings.gy, 270, 359,null, 0+rad  ,h-rad-1, rad,rad-th-1, settings.fg, settings.gy, [0,0,0]);
+var cg_bottomleft=new CGauge("bottomleft",100, 100, 200, settings.fg, settings.gy, 90, 90,null, 0+rad  ,h-rad-1, rad,rad-th-1, settings.fg, settings.gy, [0,0,0]);
 
-var cg_bottomright=new CGauge("bottomright",100, 100, 110, settings.fg, settings.gy, 0, 90,null, w-rad-1,h-rad-1, rad,rad-th-1, settings.fg, settings.gy, [0,0,0]);
+var cg_bottomright=new CGauge("bottomright",100, 100, 200, settings.fg, settings.gy, 90, -90,null, w-rad-1,h-rad-1, rad,rad-th-1, settings.fg, settings.gy, [0,0,0]);
 cg_bottomleft.draw();
 cg_topright.draw();
 cg_topleft.draw();
 cg_bottomright.draw();
 
+
+
+
+
+
+
+function drawBarHor(x){
+  v1=100; v2=200;
+  x2=w/2; x1=w-rad-th/2;
+  y2=0; y1=th+1;
+  l=x2-x1;
+  xi = (x-v1)*l/(v2-v1)+x1;
+  g.setColor.apply(g,settings.fg);
+  g.fillRect(x1,y1, xi,y2);
+  g.setColor.apply(g,settings.gy);
+  g.fillRect(xi,y1,x2,y2);
+}
+
+function drawBarVer(x){
+  v1=0; v2=100;
+  x2=w/2; x1=w-rad-th/2;
+  y2=0; y1=th+1;
+  l=x2-x1;
+  xi = (x-v1)*l/(v2-v1)+x1;
+  g.setColor.apply(g,settings.fg);
+  g.fillRect(x1,y1, xi,y2);
+  g.setColor.apply(g,settings.gy);
+  g.fillRect(xi,y1,x2,y2);
+}
+
+
+
 // setTimeout(run,99);
 //cg_topleft.draw(1);
 drawGauge(45,60);
+drawBarHor(150);
