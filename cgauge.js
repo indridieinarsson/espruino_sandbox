@@ -319,7 +319,7 @@ p.rad=function(degrs) { return 2*Math.PI*(degrs%360)/360; }; // radian <-- degre
 
 
 var q; // temp for prototype references
-function BGauge(id, val,minV,maxV,color,fColor,begX,xrange,x0
+function BGauge(id, val,minV,maxV,color,fColor
                ,x1,y1,x2,y2,bgColor) {
   //var _=0||this;
   var _ = this;
@@ -331,36 +331,33 @@ function BGauge(id, val,minV,maxV,color,fColor,begX,xrange,x0
   _.maxV=maxV;    // maximum value (arc all in color)
   _.clr=color;    // color - as required by Graphics - for the value arc
   _.fClr=fColor;  // color - as required by Graphics - for to complete the arc
-  _.begX=begX;  // 0 degrees: +x-Axis
-//  _.xrange=xrange;    // gauge full arc in degrees -/+ = counter/clockwise
-  _.x0=(x0==null)?x0:begX; // for 0/center value mark; null defaults to begDeg
+  _.begX=x1;//begX;  // 0 degrees: +x-Axis
   _.x1=x1;          // center x
   _.y1=y1;          // center y
   _.x2=x2;          // center x
   _.y2=y2;          // center y
-  _.xrange=x1-x2;
+  _.xrange=x2-x1;
   _.bClr=(bgColor)?bgColor:this.bClr;                // opt bg color, defaults blk 
   _.vLD=null;       // (display/draw) value (v) last displayed/drawn
   _.setVal(val,-1); // set value only
 } q=BGauge.prototype;
 q.setVal=function(v,o1,o2) { // --- set min/max adj'd val, draw != && o1=0 || o1>0; 
-  //console.log("extras:" +v+o1 + o2);
+  console.log("extras:" +v+o1 + o2);
+  //var chd = (v=(v<Math.min(this.minV,this.maxV))?this.minV:(v>Math.max(this.maxV,this.minV))?this.maxV:v)!=this.val; // ret
   var chd = (v=(v<this.minV)?this.minV:(v>this.maxV)?this.maxV:v)!=this.val; // ret
-  //console.log("chd :"+ chd + "| "+v + "| "+ this.val);
+  console.log("chd :"+ chd + "| "+v + "| "+ this.val);
   if (o1<0) { this.val=v; this.vLD=null; // update value only, NO drawing & never draw
   } else if (v!=this.val||o1>0||o2) { this.val=v; this.draw(o1,o2); }
   return chd; };
-//q.setValue=function(v,o1,o2){ this.val=v;}
-q.draw=function(o1,o2) { // --- draw circular gauge (otp1:value, 2:ticks+extras)
-  //var s=this.sCnt,v=Math.round(s/(this.maxV-this.minV)*(this.val-this.minV))
-  //  , h=(this.rIn)?1:0,fV=!!this.fV,fF=!!this.fF,bC=this.bClr;
+q.draw=function(o1,o2) {
   xi = (this.val-this.minV)*this.xrange/(this.maxV-this.minV) + this.begX;
   console.log("drawing ", this.begX, xi, this.begX+this.xrange);
   g.setColor.apply(g,this.clr);
-  console.log("rect 1 :",this.x1,this.y1, xi,this.y2);
+  console.log("rect 1 :",this.x1,this.y1, xi,this.y2, this.clr);
   g.fillRect(this.x1,this.y1, xi,this.y2);
-  g.setColor.apply(g,this.fclr);
-  console.log("rect 2: ", xi,this.y1,this.x2,this.y2)
+  if (xi==this.x2) {return;}
+  g.setColor.apply(g,this.fClr);
+  console.log("rect 2: ", xi,this.y1,this.x2,this.y2, this.fClr)
   g.fillRect(xi,this.y1,this.x2,this.y2);
   //xi = (x-v1)*l/(v2-v1)+x1;
   };
@@ -385,35 +382,9 @@ cg_topleft.draw();
 cg_bottomright.draw();
 
 
-
-
-function drawBarHor(x){
-  v1=100; v2=200;
-  x2=w/2; x1=w-rad-th/2;
-  y2=0; y1=th+1;
-  l=x2-x1;
-  xi = (x-v1)*l/(v2-v1)+x1;
-  g.setColor.apply(g,settings.fg);
-  g.fillRect(x1,y1, xi,y2);
-  g.setColor.apply(g,settings.gy);
-  g.fillRect(xi,y1,x2,y2);
-}
-
-function drawBarVer(x){
-  v1=0; v2=100;
-  x2=w/2; x1=w-rad-th/2;
-  y2=0; y1=th+1;
-  l=x2-x1;
-  xi = (x-v1)*l/(v2-v1)+x1;
-  g.setColor.apply(g,settings.fg);
-  g.fillRect(x1,y1, xi,y2);
-  g.setColor.apply(g,settings.gy);
-  g.fillRect(xi,y1,x2,y2);
-}
-
-var bg_gauge = new BGauge("testgauge", 0,0,100,settings.fg,settings.gy,w/2, rad+th/2,w/2 ,w-rad-th/2,40+th+1,w/2,40+0,[0,0,0]);
+var bg = new BGauge("testgauge", 0,0,100,settings.fg, settings.gy, w/2,40+0, w-rad-th/2,40+th+1, [0,0,0]);
 // setTimeout(run,99);
 //cg_topleft.draw(1);
 drawGauge(45,60);
-drawBarHor(150);
-bg_gauge.setVal(50);
+
+bg.setVal(50);
