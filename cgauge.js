@@ -255,11 +255,11 @@ p.draw=function(o1,o2) { // --- draw circular gauge (otp1:value, 2:ticks+extras)
   var s=this.sCnt,v=Math.round(s/(this.maxV-this.minV)*(this.val-this.minV))
     , h=(this.rIn)?1:0,fV=!!this.fV,fF=!!this.fF,bC=this.bClr
     , vL,vs,m; // console.log(this.id,this.val,v,s,o1,o2,this.cUp);
-  if (o2) { this.drawXtras(s,v,h,o1); }
   if (o1!=-1) { if (h&&(fV==fF)) { g.setColor.apply(g,bC);
-         while (this.cUp.length) g.drawLine.apply(g,this.cUp.pop()); 
+         while (this.cUp.length) {g.drawLine.apply(g,this.cUp.pop()); }
       } else { this.cUp=[]; }
     if (o1==1||!this.dado||(vL=this.vLD)==null) {
+      console.log("values : " , vL, v, s);
       if (v<s) { vs=this._pvs(v,s,-1,0);
         if (h&&!fF&&fV) { g.setColor.apply(g,bC); this.fSs(vs,vs.length); }
         g.setColor.apply(g,this.fClr).drawPoly(vs,h);
@@ -269,15 +269,17 @@ p.draw=function(o1,o2) { // --- draw circular gauge (otp1:value, 2:ticks+extras)
       g.setColor.apply(g,this.clr).drawPoly(vs,h);
       if (h&&fV) this.fSs(vs,vs.length); vs=null;
     } else if (v>vL) { vs=this._pvs(vL,v,1,1);
+                      console.log("values 2 : " , vL, v, s);
       if (h&&!fV&&fF) { g.setColor.apply(g,bC); this.fSs(vs,vs.length); }
       g.setColor.apply(g,this.clr).drawPoly(vs,h&&vL==0);
       if (h&&fV) this.fSs(vs,vs.length); vs=null;
     } else if (v<vL) { vs=this._pvs(v,vL,-1,1);
+                      console.log("values 3: " , vL, v, s);
       if (h&&!fF&&fV) { g.setColor.apply(g,bC); this.fSs(vs,vs.length); }
       g.setColor.apply(g,this.fClr).drawPoly(vs,h&&vL==s);
       if (h&&fF) this.fSs(vs,vs.length);
       vs=(h)?vs.slice((m=vs.length/2-2),m+4):(m=vs.slice(-2)).concat(m);
-      g.setColor.apply(g,this.clr);g.drawLine.apply(g,vs);
+      g.setColor.apply(g,this.clr);//g.drawLine.apply(g,vs);
   } } this.vLD=v; };
 p.fSs=function(vs,vsL) { // --- fill
   if (vsL<64) { g.fillPoly(vs,1); // console.log("------",vsL/2);
@@ -287,16 +289,6 @@ p.fSs=function(vs,vsL) { // --- fill
       if (i<l) { i-=2; if ((n=l-i)<30) k=n; j-=k-2;
         if (k==2) { k+=2; i-=2; j+=2; }
   } } } };
-p.drawXtras=function(s,v,h,o1) { // --- draw extras... place holder for custom override
-  if (this.tikL) this.drawTicks(h); }; // incl drawTicks() in custom override if needed 
-p.drawTicks=function(h) { // --- draw ticks, begin and end and 0-tick
-  var x=this.x,y=this.y,rTO=(h)?this.rIn:this.rOut,rTI=rTO-this.tikL,bR=this.begR
-    , eR=bR+this.sCnt*this.segR,rTS=((rTI<0)?0:rTI)/rTO; // console.log(this.id,rTO,rTI,rTS);
-  this.drawTick(x,y,rTO,rTS,eR,this.fClr);this.drawTick(x,y,rTO,rTS,bR,this.clr);
-  if (this.deg0!=this.begD) this.drawTick(x,y,rTO,rTS,bR,this.clr); };
-p.drawTick=function(x,y,t,s,r,c) { // --- draw tick x,y,radius,scale,radian,color
-  var vX=t*Math.cos(r),vY=t*Math.sin(r); g.setColor.apply(g,c); g.drawLine(
-    Math.round(x+vX),Math.round(y+vY),Math.round(x+vX*s),Math.round(y+vY*s)); };
 p._pvs=function(f,t,d,c) { // --- calc polygon vertices from..to in direction
   var x=this.x, y=this.y, rO=this.rOut, rI=this.rIn, bR=this.begR, sR=this.segR
     , l=(t-f+1)*2*((rI)?2:1) // len of array for vertices (double w/ inner radius
@@ -320,11 +312,9 @@ p.rad=function(degrs) { return 2*Math.PI*(degrs%360)/360; }; // radian <-- degre
 
 var q; // temp for prototype references
 function BGauge(id, val,minV,maxV,color,fColor
-               ,x1,y1,x2,y2,bgColor) {
+               ,x1,y1,x2,y2) {
   //var _=0||this;
   var _ = this;
-  _.mxXY=239;     // x, y max graph coord - defaults for BangleJS Graphics
-  _.bClr=[0,0,0]; // background color (used as default)
   _.id=id;        // id of the circular gauge
   _.val=null;     // temporary, set at end of construction
   _.minV=minV;    // minimum value (arc all in fColor)
@@ -337,7 +327,6 @@ function BGauge(id, val,minV,maxV,color,fColor
   _.x2=x2;          // center x
   _.y2=y2;          // center y
   _.xrange=x2-x1;
-  _.bClr=(bgColor)?bgColor:this.bClr;                // opt bg color, defaults blk 
   _.vLD=null;       // (display/draw) value (v) last displayed/drawn
   _.setVal(val,-1); // set value only
 } q=BGauge.prototype;
@@ -361,6 +350,52 @@ q.draw=function(o1,o2) {
   g.fillRect(xi,this.y1,this.x2,this.y2);
   //xi = (x-v1)*l/(v2-v1)+x1;
   };
+
+// -----------------
+var s; // temp for prototype references
+function HGauge(id, val,minV,maxV,color,fColor
+               ,x1,y1,x2,y2) {
+  //var _=0||this;
+  var _ = this;
+  _.id=id;        // id of the circular gauge
+  _.val=null;     // temporary, set at end of construction
+  _.minV=minV;    // minimum value (arc all in fColor)
+  _.maxV=maxV;    // maximum value (arc all in color)
+  _.clr=color;    // color - as required by Graphics - for the value arc
+  _.fClr=fColor;  // color - as required by Graphics - for to complete the arc
+  _.begY=y1;      // 0 degrees: +x-Axis
+  _.x1=x1;          // center x
+  _.y1=y1;          // center y
+  _.x2=x2;          // center x
+  _.y2=y2;          // center y
+  _.yrange=y2-y1;
+  _.vLD=null;       // (display/draw) value (v) last displayed/drawn
+  _.setVal(val,-1); // set value only
+} s=HGauge.prototype;
+s.setVal=function(v,o1,o2) { // --- set min/max adj'd val, draw != && o1=0 || o1>0; 
+  console.log("extras:" +v+o1 + o2);
+  //var chd = (v=(v<Math.min(this.minV,this.maxV))?this.minV:(v>Math.max(this.maxV,this.minV))?this.maxV:v)!=this.val; // ret
+  var chd = (v=(v<this.minV)?this.minV:(v>this.maxV)?this.maxV:v)!=this.val; // ret
+  console.log("chd :"+ chd + "| "+v + "| "+ this.val);
+  if (o1<0) { this.val=v; this.vLD=null; // update value only, NO drawing & never draw
+  } else if (v!=this.val||o1>0||o2) { this.val=v; this.draw(o1,o2); }
+  return chd; };
+s.draw=function(o1,o2) {
+  yi = (this.val-this.minV)*this.yrange/(this.maxV-this.minV) + this.begY;
+  console.log("drawing ", this.begY, yi, this.begY+this.yrange);
+  g.setColor.apply(g,this.clr);
+  console.log("rect 1 :",this.x1,this.y1, yi,this.y2, this.clr);
+  g.fillRect(this.x1,this.y1, this.x2, yi);
+  if (yi==this.y2) {return;}
+  g.setColor.apply(g,this.fClr);
+  console.log("rect 2: ", yi,this.y1,this.x2,this.y2, this.fClr)
+  g.fillRect(this.x1, yi, this.x2,this.y2);
+  //xi = (x-v1)*l/(v2-v1)+x1;
+  };
+
+
+
+
 // p.v=function(x,y,r,rO,ri) { // <--- vertice
 //  return [
 function r() { run(); }
@@ -371,20 +406,30 @@ loadSettings();
 console.log("colors :" +settings.fg + settings.gy);
 var cg_topleft=new CGauge("topleft",0, 0, 100, settings.fg, settings.gy, 180, 90,null, 0+rad,0+rad, rad,rad-th-1, settings.fg, settings.gy, [0,0,0]);
 
-var cg_topright=new CGauge("topright",0, 0, 200, settings.fg, settings.gy, 270, 90,null, w-rad-1,0+rad, rad,rad-th-1, settings.fg, settings.gy, [0,0,0]);
+var cg_topright=new CGauge("topright",0, 0, 100, settings.fg, settings.gy, 0, -90,null, w-rad-1,0+rad, rad,rad-th-1, settings.fg, settings.gy, [0,0,0]);
 
-var cg_bottomleft=new CGauge("bottomleft",100, 100, 200, settings.fg, settings.gy, 90, 90,null, 0+rad  ,h-rad-1, rad,rad-th-1, settings.fg, settings.gy, [0,0,0]);
+var cg_bottomleft=new CGauge("bottomleft",0, 0, 100, settings.fg, settings.gy, 90, 90,null, 0+rad  ,h-rad-1, rad,rad-th-1, settings.fg, settings.gy, [0,0,0]);
 
-var cg_bottomright=new CGauge("bottomright",100, 100, 200, settings.fg, settings.gy, 90, -90,null, w-rad-1,h-rad-1, rad,rad-th-1, settings.fg, settings.gy, [0,0,0]);
+var cg_bottomright=new CGauge("bottomright",0, 0, 100, settings.fg, settings.gy, 90, -90,null, w-rad-1,h-rad-1, rad,rad-th-1, settings.fg, settings.gy, [0,0,0]);
 cg_bottomleft.draw();
 cg_topright.draw();
 cg_topleft.draw();
 cg_bottomright.draw();
 
+setvals = function(x){
+  cg_bottomleft.setVal(x);
+  cg_bottomright.setVal(x);
+  cg_topleft.setVal(x);
+  cg_topright.setVal(x);
+}
 
 var bg = new BGauge("testgauge", 0,0,100,settings.fg, settings.gy, w/2,40+0, w-rad-th/2,40+th+1, [0,0,0]);
+
+var hg = new HGauge("testgauge2", 0, 0, 100, settings.fg, settings.gy, w-50, 3*h/4, w-th-2-50, h/4, [0,0,0]);
 // setTimeout(run,99);
 //cg_topleft.draw(1);
 drawGauge(45,60);
 
 bg.setVal(50);
+hg.setVal(10);
+setvals(0);
