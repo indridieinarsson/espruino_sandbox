@@ -1,7 +1,7 @@
 // dualgauge : 
 const h = g.getHeight();
 const w = g.getWidth();
-const rad = 16;
+const rad = 25;
 const th = 3;
 const bl = Math.round(0.5*Math.PI*rad);
 const halflength = (w/2-rad) + bl + (h-rad-rad) + bl + (w/2-rad);
@@ -34,152 +34,7 @@ function loadSettings() {
   settings.idle_check = settings.idle_check||true;
 }
 
-function find_split_segment(csseg, nrtf){
-    for (var i = 0; i < csseg.length; i++) {
-        if (nrtf < csseg[i]){
-            return i;
-        }
-    }
-    return csseg.length;
-}
-
-function cumsum(segs) {
-    retval = [];
-    segs.forEach(function(nr, ix){
-        if (ix==0) {
-            retval.push(nr);
-        }
-        else {
-            retval.push(nr+retval[ix-1]);
-        }
-    });
-    return retval;
-}
-
-// construct length of all segments:
-function get_cumlength(l, n_bl, nrs){
-    lengths = nrs.map(x => Math.round((x+1)*l/n_bl) - Math.round(x*l/n_bl));
-    all_lengths = [];
-    all_lengths=all_lengths.concat(lengths.slice(n_hbl,n_bl));
-    all_lengths.push(bl);
-    all_lengths=all_lengths.concat(lengths);
-    all_lengths.push(bl);
-    all_lengths=all_lengths.concat(lengths.slice().reverse().slice(n_hbl,n_bl));
-    return cumsum(all_lengths);
-}
-
-//function thickring(x,y, r, th, color){
-//    g.setColor(color);
-//    g.fillCircle(x,y,r);
-//    g.setColor(g.theme.bg);
-//    g.fillCircle(x,y,r-th-1);
-//}
-
-function topleft(color){
-  console.log("topleft");
-  cg_topleft.setVal(0);
-  //thickring(0+rad  ,0+rad  , rad, th, color);
-}
-
-function topright(color){
-  console.log("topright");
-    //thickring(w-rad-2,0+rad  , rad, th, color);
-  cg_topright.setVal(0);
-}
-
-
-function bottomleft(color){
-  console.log("bottomleft");
-  cg_bottomleft.setVal(0);
-    //thickring(0+rad  ,h-rad-2, rad, th, color);
-}
-
-function bottomright(color){
-  console.log("bottomright");
-  cg_bottomright.setVal(0)
-    //thickring(w-rad-2,h-rad-2, rad, th, color);
-}
-
-function drawGauge(percL, percR){
-    // g.setColor(g.theme.fg);
-    // bogalengd : 2*pi*rad/4 = 
-    tarcnr = n_hbl;
-    barcnr = tarcnr + n_bl+1;
-
-    nrs = [];
-    for (var i=0; i<n_bl; i++){
-        nrs.push(i);
-    }
-
-    l = w-2*rad-2;
-    intervals = nrs.map(x => [rad+Math.round(x*l/n_bl), rad+Math.round((x+1)*l/n_bl)]);
-    cumsum_all = get_cumlength(l, n_bl, nrs);
-    maxPixels=cumsum_all[cumsum_all.length - 1];
-    nrtofindR = Math.round(percR*maxPixels/100);
-    gaugePosR = find_split_segment(cumsum_all, nrtofindR);
-
-    nrtofindL = Math.round(percL*maxPixels/100);
-    gaugePosL = find_split_segment(cumsum_all, nrtofindL);
-
-    r_intervals = intervals.slice(n_hbl, n_bl);
-    l_intervals = intervals.slice(0, n_hbl);
-    r_rects=[];
-
-    r_intervals.forEach(it => {
-        tmp=[it[0], 0, it[1], th+1];
-        r_rects.push(tmp);
-    });
-    // Right
-    intervals.forEach(it => {
-        r_rects.push([w-th-2, it[0], w, it[1]]);
-    });
-    // Bottom
-    r_intervals.slice().reverse().forEach(it => {
-        r_rects.push([it[0], h-th-2, it[1], h]);
-    });
-
-    r_rects.reverse();
-
-    l_rects=[];
-    l_intervals.slice().reverse().forEach(it => {
-        l_rects.push([it[0], 0, it[1], th+1]);
-    });
-    // Left
-    intervals.forEach(it => {
-        l_rects.push([0, it[0], th+1, it[1]]);
-    });
-    // Bottom
-    l_intervals.forEach(it => {
-        l_rects.push([it[0], h-th-2, it[1], h]);
-    });
-
-    l_rects.reverse();
-    if (gaugePosR<barcnr) {topright(settings.gy);} else {topright(settings.fg);}
-    if (gaugePosR<tarcnr) {bottomright(settings.gy);} else {bottomright(settings.fg);}
-
-    if (gaugePosL<barcnr) {topleft(settings.gy);} else {topleft(settings.fg);}
-    if (gaugePosL<tarcnr) {bottomleft(settings.gy);} else {bottomleft(settings.fg);}
-    // fill rest of center
-    g.setColor(g.theme.bg);
-    //g.fillRect(0+rad,0,     w-rad-2,h);
-    //g.fillRect(0    ,0+rad, w      ,h-rad-2);
-    g.setColor(settings.fg);
-    // Top
-    r_rects.forEach((it,index) => {
-        if (index >= gaugePosR) {g.setColor(settings.gy);}
-        g.fillRect(it[0],it[1],it[2],it[3]);
-    });
-
-    g.setColor(settings.fg);
-    l_rects.forEach((it,index) => {
-        if (index >= gaugePosL) {g.setColor(settings.gy);}
-        g.fillRect(it[0],it[1],it[2],it[3]);
-    });
-}
-
-
-
-
+loadSettings();
 // cgauge.js - circular gauge
 // allObjects - forum.espruiono.com
 // 2020-11-27
@@ -311,7 +166,7 @@ p.rad=function(degrs) { return 2*Math.PI*(degrs%360)/360; }; // radian <-- degre
 
 
 var q; // temp for prototype references
-function BGauge(id, val,minV,maxV,color,fColor
+function HGauge(id, val,minV,maxV,color,fColor
                ,x1,y1,x2,y2) {
   //var _=0||this;
   var _ = this;
@@ -329,7 +184,7 @@ function BGauge(id, val,minV,maxV,color,fColor
   _.xrange=x2-x1;
   _.vLD=null;       // (display/draw) value (v) last displayed/drawn
   _.setVal(val,-1); // set value only
-} q=BGauge.prototype;
+} q=HGauge.prototype;
 q.setVal=function(v,o1,o2) { // --- set min/max adj'd val, draw != && o1=0 || o1>0; 
   console.log("extras:" +v+o1 + o2);
   //var chd = (v=(v<Math.min(this.minV,this.maxV))?this.minV:(v>Math.max(this.maxV,this.minV))?this.maxV:v)!=this.val; // ret
@@ -353,7 +208,7 @@ q.draw=function(o1,o2) {
 
 // -----------------
 var s; // temp for prototype references
-function HGauge(id, val,minV,maxV,color,fColor
+function VGauge(id, val,minV,maxV,color,fColor
                ,x1,y1,x2,y2) {
   //var _=0||this;
   var _ = this;
@@ -371,7 +226,7 @@ function HGauge(id, val,minV,maxV,color,fColor
   _.yrange=y2-y1;
   _.vLD=null;       // (display/draw) value (v) last displayed/drawn
   _.setVal(val,-1); // set value only
-} s=HGauge.prototype;
+} s=VGauge.prototype;
 s.setVal=function(v,o1,o2) { // --- set min/max adj'd val, draw != && o1=0 || o1>0; 
   console.log("extras:" +v+o1 + o2);
   //var chd = (v=(v<Math.min(this.minV,this.maxV))?this.minV:(v>Math.max(this.maxV,this.minV))?this.maxV:v)!=this.val; // ret
@@ -394,42 +249,49 @@ s.draw=function(o1,o2) {
   };
 
 
+var halfl=w/2-rad-1;
+var cornerl = Math.PI*rad/2;
+var fulll = h-2*rad-1;
+
+var tmp=0;
+var hg_rl = new HGauge("hg_rl", tmp,tmp,tmp+=halfl,settings.fg, settings.gy, w/2,h-th-2, w-rad-1,h);
+var cg_bottomright=new CGauge("bottomright",tmp+1, tmp+1, tmp+=cornerl, settings.fg, settings.gy, 90, -90,null, w-rad-1,h-rad-1, rad,rad-th-1, settings.fg, settings.gy, [0,0,0]);
+tmp=tmp+cornerl
+var vg_r = new VGauge("vg_r", tmp+1, tmp+1, tmp+=fulll, settings.fg, settings.gy, w, h-rad-1,  w-th-2, rad);
+var cg_topright=new CGauge("topright",tmp+1, tmp+1, tmp+=cornerl, settings.fg, settings.gy, 0, -90,null, w-rad-1,0+rad, rad,rad-th-1, settings.fg, settings.gy, [0,0,0]);
+var hg_ru = new HGauge("hg_ru", tmp+1,tmp+1,tmp+=halfl,settings.fg, settings.gy, w-rad-1,th+1, w/2,0);
+
+tmp=0;
+var hg_ll = new HGauge("hg_ll", tmp,tmp,tmp+=halfl,settings.fg, settings.gy, w/2,h-th-2, rad,h);
+var cg_bottomleft=new CGauge("bottomleft",tmp+1, tmp+1, tmp+=cornerl, settings.fg, settings.gy, 90, 90,null, 0+rad  ,h-rad-1, rad,rad-th-1, settings.fg, settings.gy, [0,0,0]);
+var vg_l = new VGauge("vg_l", tmp+1, tmp+1, tmp+=fulll, settings.fg, settings.gy, th+1, h-rad-1, 0, rad);
+var cg_topleft=new CGauge("topleft",tmp+1, tmp+1, tmp+=cornerl, settings.fg, settings.gy, 180, 90,null, 0+rad,0+rad, rad,rad-th-1, settings.fg, settings.gy, [0,0,0]);
+var hg_lu = new HGauge("hg_lu", tmp+1,tmp+1,tmp+=halfl,settings.fg, settings.gy, rad,th+1, w/2,0);
 
 
-// p.v=function(x,y,r,rO,ri) { // <--- vertice
-//  return [
-function r() { run(); }
-function hh() { console.log("someting happened");
-                            halt(); }
-function c() { cont(); }
-loadSettings();
-console.log("colors :" +settings.fg + settings.gy);
-var cg_topleft=new CGauge("topleft",0, 0, 100, settings.fg, settings.gy, 180, 90,null, 0+rad,0+rad, rad,rad-th-1, settings.fg, settings.gy, [0,0,0]);
 
-var cg_topright=new CGauge("topright",0, 0, 100, settings.fg, settings.gy, 0, -90,null, w-rad-1,0+rad, rad,rad-th-1, settings.fg, settings.gy, [0,0,0]);
-
-var cg_bottomleft=new CGauge("bottomleft",0, 0, 100, settings.fg, settings.gy, 90, 90,null, 0+rad  ,h-rad-1, rad,rad-th-1, settings.fg, settings.gy, [0,0,0]);
-
-var cg_bottomright=new CGauge("bottomright",0, 0, 100, settings.fg, settings.gy, 90, -90,null, w-rad-1,h-rad-1, rad,rad-th-1, settings.fg, settings.gy, [0,0,0]);
-cg_bottomleft.draw();
-cg_topright.draw();
-cg_topleft.draw();
-cg_bottomright.draw();
-
+setvals_r = function(x) {
+  cg_topright.setVal(x);
+  cg_bottomright.setVal(x);
+  vg_r.setVal(x);
+  hg_rl.setVal(x);
+  hg_ru.setVal(x);
+};
+setvals_l = function(x) {
+  cg_topleft.setVal(x);
+  cg_bottomleft.setVal(x);
+  vg_l.setVal(x);
+  hg_ll.setVal(x);
+  hg_lu.setVal(x);
+};
 setvals = function(x){
   cg_bottomleft.setVal(x);
   cg_bottomright.setVal(x);
   cg_topleft.setVal(x);
   cg_topright.setVal(x);
-}
+};
+setvals_l(1000);setvals_l(0);
+setvals_r(1000);setvals_r(0);
 
-var bg = new BGauge("testgauge", 0,0,100,settings.fg, settings.gy, w/2,40+0, w-rad-th/2,40+th+1, [0,0,0]);
-
-var hg = new HGauge("testgauge2", 0, 0, 100, settings.fg, settings.gy, w-50, 3*h/4, w-th-2-50, h/4, [0,0,0]);
-// setTimeout(run,99);
-//cg_topleft.draw(1);
-drawGauge(45,60);
-
-bg.setVal(50);
-hg.setVal(10);
-setvals(0);
+setvals_l(50);
+setvals_r(300);
