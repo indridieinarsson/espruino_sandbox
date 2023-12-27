@@ -41,7 +41,9 @@
 
       if (Complications != null) {
         let PlacementRadius    = outerRadius * 0.4;
+        let PlacementRadiusExtra    = outerRadius * 0.6;
         let ComplicationRadius = outerRadius * 0.3/2;
+        let ComplicationRadiusExtra = outerRadius * 0.45/2;
 
         let sin30 = 0.5;
         let sin60 = 0.866;
@@ -76,8 +78,8 @@
         if (Complications.l != null) {
           try {
             Complications.l.draw(
-              CenterX-PlacementRadius,CenterY,
-              ComplicationRadius, Settings
+              CenterX-PlacementRadiusExtra,CenterY,
+              ComplicationRadiusExtra, Settings
             );
           } catch (Signal) { print('Error drawing complication at position "l": ',Signal); }
         }
@@ -85,8 +87,8 @@
         if (Complications.r != null) {
           try {
             Complications.r.draw(
-              CenterX+PlacementRadius,CenterY,
-              ComplicationRadius, Settings
+              CenterX+PlacementRadiusExtra,CenterY,
+              ComplicationRadiusExtra, Settings
             );
           } catch (Signal) { print('Error drawing complication at position "r": ',Signal); }
         }
