@@ -1,5 +1,5 @@
 ;(function () {
-    let SecondHandOffset = 20;
+    let SecondHandOffset = 0;
     let SecondHandLength = 0;
 
     let twoPi  = 2*Math.PI, deg2rad = Math.PI/180;
