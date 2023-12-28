@@ -31,7 +31,7 @@
         } catch (Signal) { print('Error drawing background: ',Signal); }
       }
 
-      Bangle.drawWidgets();
+      // Bangle.drawWidgets();
 
       if (ClockFace != null) {
         try {
@@ -41,9 +41,9 @@
 
       if (Complications != null) {
         let PlacementRadius    = outerRadius * 0.4;
-        let PlacementRadiusExtra    = outerRadius * 0.6;
+        let PlacementRadiusExtra    = outerRadius * 0.56;
         let ComplicationRadius = outerRadius * 0.3/2;
-        let ComplicationRadiusExtra = outerRadius * 0.45/2;
+        let ComplicationRadiusExtra = outerRadius * 0.43/2;
 
         let sin30 = 0.5;
         let sin60 = 0.866;
