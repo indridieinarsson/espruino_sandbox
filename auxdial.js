@@ -15,7 +15,7 @@
     exports.draw = function draw (
         Settings, CenterX, CenterY, outerRadius, Hours,Minutes,Seconds
     ) {
-        HourHandLength = outerRadius * 0.6;
+        HourHandLength = outerRadius * 0.52;
         MinuteHandLength  = outerRadius * 0.9;
 
         let HoursAngle   = (Hours+(Minutes/60))/12 * twoPi - Pi;
@@ -56,6 +56,8 @@
         drawdot(-3);
         drawdot(3);
 
+
+	    // Not seconds, but 24 hour clock
         if (Seconds != null) {
             g.setColor(Settings.Seconds === 'Theme' ? g.theme.fgH : Settings.Seconds || '#FF0000');
             // 24 hour clock
