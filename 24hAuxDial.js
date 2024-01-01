@@ -2,11 +2,8 @@
     let SecondHandOffset = 0;
     let SecondHandLength = 0;
 
-    let twoPi  = 2*Math.PI, deg2rad = Math.PI/180;
+    let twoPi  = 2*Math.PI;
     let Pi     = Math.PI;
-    let halfPi = Math.PI/2;
-
-    let sin = Math.sin, cos = Math.cos;
 
     exports.draw = function draw (
         Settings, CenterX, CenterY, outerRadius, h_red,m_red, h_blue, m_blue
@@ -44,7 +41,7 @@
         // g.setColor(Settings.Seconds === 'Theme' ? g.theme.fgH : Settings.Seconds || '#FF0000');
 	g.setColor('#FF0000');
 	draw24htime(h_red, m_red);
-	g.setColor('#0000FF');
+	g.setColor('#00FFFF');
 	draw24htime(h_blue, m_blue);
         g.setColor(Settings.Foreground === 'Theme' ? g.theme.fg : Settings.Foreground || '#000000');
 	g.drawCircle(CenterX, CenterY, outerRadius+3);
