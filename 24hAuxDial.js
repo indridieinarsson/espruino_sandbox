@@ -9,7 +9,7 @@
     let sin = Math.sin, cos = Math.cos;
 
     exports.draw = function draw (
-        Settings, CenterX, CenterY, outerRadius, Hours,Minutes,Seconds
+        Settings, CenterX, CenterY, outerRadius, h_red,m_red, h_blue, m_blue
     ) {
         function drawdot(i){
             let Phi = i * Math.PI*2/12;
@@ -41,10 +41,13 @@
         drawdot(-3);
         drawdot(3);
 
-        g.setColor(Settings.Seconds === 'Theme' ? g.theme.fgH : Settings.Seconds || '#FF0000');
-	draw24htime(Hours, Minutes);
+        // g.setColor(Settings.Seconds === 'Theme' ? g.theme.fgH : Settings.Seconds || '#FF0000');
+	g.setColor('#FF0000');
+	draw24htime(h_red, m_red);
+	g.setColor('#0000FF');
+	draw24htime(h_blue, m_blue);
         g.setColor(Settings.Foreground === 'Theme' ? g.theme.fg : Settings.Foreground || '#000000');
-	g.drawCircle(CenterX, CenterY, outerRadius+2);
+	g.drawCircle(CenterX, CenterY, outerRadius+3);
 	let now = new Date();
 	let Hoursn   = now.getHours();
 	let Minutesn = now.getMinutes();
