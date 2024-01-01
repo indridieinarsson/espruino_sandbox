@@ -44,8 +44,9 @@
         g.setColor(Settings.Seconds === 'Theme' ? g.theme.fgH : Settings.Seconds || '#FF0000');
 	draw24htime(Hours, Minutes);
         g.setColor(Settings.Foreground === 'Theme' ? g.theme.fg : Settings.Foreground || '#000000');
+	g.drawCircle(CenterX, CenterY, outerRadius+2);
 	let now = new Date();
-	let Hoursn   = now.getHours() % 12;
+	let Hoursn   = now.getHours();
 	let Minutesn = now.getMinutes();
 	draw24htime(Hoursn, Minutesn);
     };

@@ -4,7 +4,6 @@
     let twoPi = 2*Math.PI;
 
     g.setColor(Settings.Foreground === 'Theme' ? g.theme.fg : Settings.Foreground || '#000000');
-
     let withDots = Settings.withDots;
     if (withDots) {
       outerRadius -= 4;
@@ -22,7 +21,7 @@
     g.setFont('Vector', 20);
     g.setFontAlign(0,0);
 
-    let innerRadius = (withDots ? outerRadius * 0.9 : outerRadius) - 10;
+    let innerRadius = (withDots ? outerRadius * 0.95 : outerRadius) - 10;
     for (let i = 0; i < 12; i++) {
       let Phi = i * twoPi/12;
 
